@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Backpack\CRUD\CrudTrait;
 use App\Events\UserCreated;
+use App\Models\Chart;
 use Illuminate\Notifications\Messages\MailMessage;
 use Backpack\Base\app\Notifications\ResetPasswordNotification as ResetPasswordNotification;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -71,5 +72,15 @@ class User extends Authenticatable
             ])
             ->action(trans('backpack.base.password_reset.button'), url(config('backpack.base.route_prefix').'/password/reset', $this->token))
             ->line(trans('backpack.base.password_reset.notice'));
+    }
+
+    /**
+     * Define a one-to-many (one user has many charts) relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function charts()
+    {
+        return $this->hasMany(Chart::class);
     }
 }

@@ -12,3 +12,6 @@
         <li><a href="{{ backpack_url('permission') }}"><i class="fa fa-key"></i> <span>Permissions</span></a></li>
     </ul>
 </li>
+
+<!-- Chart, ChartRecords -->
+<li><a href="{{ backpack_url('chart') }}"><i class="fa fa-area-chart"></i> <span>Charts</span></a></li>
