@@ -4,6 +4,7 @@
 </li>
 
 <!-- Users, Roles Permissions -->
+@role('administrator')
 <li class="treeview">
     <a href="#"><i class="fa fa-group"></i> <span>Users, Roles, Permissions</span> <i class="fa fa-angle-left pull-right"></i></a>
     <ul class="treeview-menu">
@@ -12,6 +13,13 @@
         <li><a href="{{ backpack_url('permission') }}"><i class="fa fa-key"></i> <span>Permissions</span></a></li>
     </ul>
 </li>
+@endrole
 
 <!-- Chart, ChartRecords -->
-<li><a href="{{ backpack_url('chart') }}"><i class="fa fa-area-chart"></i> <span>Charts</span></a></li>
+<li class="treeview">
+    <a href="#"><i class="fa fa-area-chart"></i> <span>Chart, Chart records</span> <i class="fa fa-angle-left pull-right"></i></a>
+    <ul class="treeview-menu">
+        <li><a href="{{ backpack_url('chart') }}"><i class="fa fa-area-chart"></i> <span>Charts</span></a></li>
+        <li><a href="{{ backpack_url('chart_record') }}"><i class="fa fa-sticky-note-o"></i> <span>Chart record</span></a></li>
+    </ul>
+</li>

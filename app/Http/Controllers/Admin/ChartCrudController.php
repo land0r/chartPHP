@@ -32,6 +32,7 @@ class ChartCrudController extends CrudController
         |--------------------------------------------------------------------------
         */
         $this->crud->addClause('where', 'user_id', '=', auth()->user()->id);
+        $this->crud->allowAccess('show');
 
         // Columns
         $this->crud->addColumns(
@@ -115,9 +116,29 @@ class ChartCrudController extends CrudController
         return $redirect_location;
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     *
+     * @return string $content
+     */
     public function show($id)
     {
+        $content = parent::show($id);
 
+        $this->crud->addColumn(
+            [
+                'name' => 'chart_view',
+                'label' => "Chart view",
+                'type' => 'view',
+                'view' => 'admin.chart',
+            ]
+        );
+
+        $this->crud->addButtonFromView('line', 'edit_records', 'edit_records', 'end');
+
+        return $content;
     }
 
     /**
@@ -179,24 +200,28 @@ class ChartCrudController extends CrudController
      */
     public function formatData($values)
     {
-        $output = (is_array($values)) ? "<ul>" : "";
+        if(empty($values)) {
+            $output = 'This record has no data yet';
+        } else {
+            $output = (is_array($values)) ? "<ul>" : "";
 
-        foreach($values as $key => $value) {
-            if(is_array($value) || is_object($value)) {
-                $output .= "<li>" . ucfirst($key) . ":</li>";
-                $output .= $this->formatData($value);
-            } else {
-                if ($key == 'borderColor' || $key == 'backgroundColor') {
-                    $output .= "<li>" . ucfirst($key) .
-                        ": <i class='fa fa-square' aria-hidden='true' style='color:$value' title='$value'></i>" .
-                        "</li>";
+            foreach($values as $key => $value) {
+                if(is_array($value) || is_object($value)) {
+                    $output .= "<li>" . ucfirst($key) . ":</li>";
+                    $output .= $this->formatData($value);
                 } else {
-                    $output .= "<li>" . ucfirst($key) . ": " . $value . "</li>";
+                    if ($key == 'borderColor' || $key == 'backgroundColor') {
+                        $output .= "<li>" . ucfirst($key) .
+                            ": <i class='fa fa-square' aria-hidden='true' style='color:$value' title='$value'></i>" .
+                            "</li>";
+                    } else {
+                        $output .= "<li>" . ucfirst($key) . ": " . $value . "</li>";
+                    }
                 }
             }
-        }
 
-        $output .= (is_array($values)) ? "</ul>" : "";
+            $output .= (is_array($values)) ? "</ul>" : "";
+        }
 
         return $output;
     }

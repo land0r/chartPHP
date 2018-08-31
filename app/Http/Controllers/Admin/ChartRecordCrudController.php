@@ -78,13 +78,14 @@ class ChartRecordCrudController extends CrudController
 
         // Fields
         $this->crud->addField(
-            [
-                'label' => "Chart",
-                'type' => 'select',
+            [ // select_from_array
                 'name' => 'chart_id',
-                'entity' => 'chart',
-                'attribute' => 'name',
-                'model' => "App\Models\Chart"
+                'label' => "Chart",
+                'type' => 'select2_from_array',
+                'options' => $charts
+                    ->pluck('name', 'id')
+                    ->toArray(),
+                'allows_null' => false,
             ], 'create'
         );
 
@@ -169,24 +170,28 @@ class ChartRecordCrudController extends CrudController
      */
     public function formatData($values)
     {
-        $output = (is_array($values)) ? "<ul>" : "";
+        if(empty($values)) {
+            $output = 'This record has no data yet';
+        } else {
+            $output = (is_array($values)) ? "<ul>" : "";
 
-        foreach($values as $key => $value) {
-            if(is_array($value) || is_object($value)) {
-                $output .= "<li>" . ucfirst($key) . ":</li>";
-                $output .= $this->formatData($value);
-            } else {
-                if ($key == 'borderColor' || $key == 'backgroundColor') {
-                    $output .= "<li>" . ucfirst($key) .
-                        ": <i class='fa fa-square' aria-hidden='true' style='color:$value' title='$value'></i>" .
-                        "</li>";
+            foreach($values as $key => $value) {
+                if(is_array($value) || is_object($value)) {
+                    $output .= "<li>" . ucfirst($key) . ":</li>";
+                    $output .= $this->formatData($value);
                 } else {
-                    $output .= "<li>" . ucfirst($key) . ": " . $value . "</li>";
+                    if ($key == 'borderColor' || $key == 'backgroundColor') {
+                        $output .= "<li>" . ucfirst($key) .
+                            ": <i class='fa fa-square' aria-hidden='true' style='color:$value' title='$value'></i>" .
+                            "</li>";
+                    } else {
+                        $output .= "<li>" . ucfirst($key) . ": " . $value . "</li>";
+                    }
                 }
             }
-        }
 
-        $output .= (is_array($values)) ? "</ul>" : "";
+            $output .= (is_array($values)) ? "</ul>" : "";
+        }
 
         return $output;
     }

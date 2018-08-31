@@ -70,17 +70,24 @@ let ChartFactory = {
                 title: {
                     display: true,
                     text: result.name
-                }, scales: {
+                },
+                scales: {
                     yAxes: [{
                         scaleLabel: {
                             display: true,
                             labelString: Axis.yAxes
+                        },
+                        ticks: {
+                            beginAtZero: true
                         }
                     }],
                     xAxes: [{
                         scaleLabel: {
                             display: true,
                             labelString: Axis.xAxes
+                        },
+                        ticks: {
+                            beginAtZero: true
                         }
                     }]
                 }
@@ -156,7 +163,13 @@ let ChartFactory = {
                 ]
             },
             options: {
-                legend: { display: false },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
                 title: {
                     display: true,
                     text: result.name
