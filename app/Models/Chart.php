@@ -63,6 +63,16 @@ class Chart extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Define a one-to-many (one chart has many chart records) relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function chartRecords()
+    {
+        return $this->hasMany(ChartRecord::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Chart;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 
 // VALIDATION: change the requests to match your own file names if you need form validation
@@ -23,18 +24,35 @@ class ChartRecordCrudController extends CrudController
         |--------------------------------------------------------------------------
         */
         $this->crud->setModel('App\Models\ChartRecord');
-        $this->crud->setRoute(config('backpack.base.route_prefix') . '/chartrecord');
-        $this->crud->setEntityNameStrings('chartrecord', 'chart_records');
+        $this->crud->setRoute(config('backpack.base.route_prefix') . '/chart_record');
+        $this->crud->setEntityNameStrings('chart record', 'Chart Records');
 
         /*
         |--------------------------------------------------------------------------
         | CrudPanel Configuration
         |--------------------------------------------------------------------------
         */
+        $charts = Chart::where('user_id', '=', auth()->user()->id)->get();
+        $chartIds = [];
+
+        foreach ($charts as $chart) {
+            $chartIds[] = $chart->id;
+        }
+
+        $this->crud->addClause(
+            'whereIn',
+            'chart_id',
+            $chartIds
+        );
 
         // Columns
         $this->crud->addColumns(
             [
+                [
+                    'name' => 'chart.id',
+                    'type' => 'text',
+                    'label' => "Chart ID",
+                ],
                 [
                     'name' => 'chart.name',
                     'type' => 'text',
@@ -69,6 +87,21 @@ class ChartRecordCrudController extends CrudController
                 'model' => "App\Models\Chart"
             ], 'create'
         );
+
+        // Filters
+        $this->crud->addFilter([ // select2 filter
+            'name' => 'chart_id',
+            'type' => 'select2',
+            'label'=> 'Chart'
+        ], function() {
+            return Chart::all()
+                ->where('user_id', '=', auth()->user()->id)
+                ->keyBy('id')
+                ->pluck('name', 'id')
+                ->toArray();
+        }, function($value) {
+             $this->crud->addClause('where', 'chart_id', $value);
+        });
 
         // add asterisk for fields that are required in ChartRecordRequest
         $this->crud->setRequiredFields(StoreRequest::class, 'create');

@@ -51,7 +51,9 @@ class ChartCrudController extends CrudController
                     'label' => 'Data',
                     'type' => 'closure',
                     'function' => function($entry) {
-                        return $this->formatData($entry->data);
+                        $values = json_decode($entry->data, true);
+
+                        return $this->formatData($values);
                     }
                 ],
             ]
@@ -142,7 +144,7 @@ class ChartCrudController extends CrudController
         $this->data['id'] = $id;
 
         $this->data['fields'][] = [
-            'name' => 'custom-ajax-button',
+            'name' => 'chart-data',
             'type' => 'view',
             'view' => 'admin.fields.charts.' . $this->data['entry']->chart_type
         ];
@@ -177,17 +179,12 @@ class ChartCrudController extends CrudController
      */
     public function formatData($values)
     {
-        $values = json_decode($values, true);
-
-        if(json_last_error()) {
-            return '';
-        }
-
         $output = (is_array($values)) ? "<ul>" : "";
+
         foreach($values as $key => $value) {
             if(is_array($value) || is_object($value)) {
                 $output .= "<li>" . ucfirst($key) . ":</li>";
-                $output .= $this->createUlList($value);
+                $output .= $this->formatData($value);
             } else {
                 if ($key == 'borderColor' || $key == 'backgroundColor') {
                     $output .= "<li>" . ucfirst($key) .
